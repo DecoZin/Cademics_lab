@@ -1,2 +1,0 @@
-register.v
-register_test.v
