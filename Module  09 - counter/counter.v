@@ -14,13 +14,12 @@ module counter
     begin 
       if (rst)
         cnt_out <= 'b0;
-      else
-        begin 
-          if (load) 
-            cnt_out <= cnt_in;
-          else if (enab)
-            cnt_out <= cnt_out + 1;
-        end
+      else if (load) 
+        cnt_out <= cnt_in;
+      else if (enab)
+        cnt_out <= cnt_out + 1;
+      else 
+        cnt_out <= cnt_out;
     end
 
 endmodule
