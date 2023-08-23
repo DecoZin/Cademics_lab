@@ -40,14 +40,25 @@ module memory_test;
    end
   endtask
 
-////////////////////////////////////////////
-//TO-DO: CODE THE WRITE TASK AS INSTRUCTED//
-////////////////////////////////////////////
+task write
+(
+  input [AWIDTH-1:0] addr,
+  input [DWIDTH-1:0] data
+);
 
+  wr=1; rd=0; memory_test.addr=addr; rdata=data; @(negedge clk);
 
-////////////////////////////////////////////
-//TO-DO: CODE THE READ TASK AS INSTRUCTED///
-////////////////////////////////////////////
+endtask
+
+task read
+(
+  input [AWIDTH-1:0] addr,
+  input [DWIDTH-1:0] data
+);
+
+  wr=0; rd=1; memory_test.addr=addr; rdata='bz; @(negedge clk) expect (data);
+
+endtask
 
   
   initial repeat (67) begin #5 clk=1; #5 clk=0; end
