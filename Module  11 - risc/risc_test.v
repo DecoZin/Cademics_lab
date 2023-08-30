@@ -48,10 +48,10 @@ module risc_test;
       //        WORKS THEN THE HALT WILL OCCUR AFTER A TOTAL OF 11 CLOCKS.
       $display("Testing JMP instruction");
       //here add the required code to complete the testing of JMP instruction
-
-
-
-	  reset;
+      risc_inst.memory_inst.array[0] = { JMP, 5'd2 };
+      risc_inst.memory_inst.array[1] = { JMP, 5'd2 };
+      risc_inst.memory_inst.array[2] = { HLT, 5'd2 };
+	    reset;
       clock(10); expect(0); clock(1); expect(1);
 
       // TO DO: TEST THE "SKZ" INSTRUCTION. MEMORY LOCATION 0 WILL CONTAIN AN

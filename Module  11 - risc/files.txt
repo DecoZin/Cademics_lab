@@ -1,9 +1,9 @@
-../solutions/lab4-mux/multiplexor.v
-../solutions/lab5-drvr/driver.v
-../solutions/lab6-alu/alu.v
-../solutions/lab7-ctrl/controller.v
-../solutions/lab9-mem/memory.v
-../solutions/lab8-reg/register.v
-../solutions/lab10-cntr/counter.v
+../Cademics_help/solutions/lab3-mux/multiplexor.v
+../Cademics_help/solutions/lab4-drvr/driver.v
+../Cademics_help/solutions/lab5-alu/alu.v
+../Cademics_help/solutions/lab6-ctrl/controller.v
+../Cademics_help/solutions/lab8-mem/memory.v
+../Cademics_help/solutions/lab7-reg/register.v
+../Cademics_help/solutions/lab9-cntr/counter.v
 ./risc.v
 ./risc_test.v
