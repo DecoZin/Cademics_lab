@@ -12,7 +12,7 @@ module rcvr
   // For proper operation the FSM must hard-code the MATCH
   localparam [7:0] MATCH = 8'hA5 ; // 10100101
 
-  reg [3:0] state ;
+  reg [3:0] state, nstate;
 
   // Opportunity for Gray encoding as path is mostly linear
   localparam [3:0] HEAD1=4'b0000, HEAD2=4'b0001, HEAD3=4'b0011, HEAD4=4'b0010,
@@ -22,54 +22,66 @@ module rcvr
 
   reg [6:0] body_reg ;
 
-  always @(posedge clock)
+  always @(posedge clock) 
+    begin
+      if (reset)
+        begin
+          ready   <= 0;
+          overrun <= 0;
+        end
+      else
+        begin
+        // IF STATE IS BODY? THEN SHIFT DATA INPUT LEFT INTO BODY REGISTER
+      if (state==BODY1 || state==BODY2 || state==BODY3 || state==BODY4 
+                       || state==BODY5 || state==BODY6 || state==BODY7)
+        body_reg <= { body_reg, data_in};
+        // IF STATE IS BODY8 THEN COPY CONCATENATION OF BODY REGISTER AND INPUT
+        // DATA TO OUTPUT REGISTER
+      if (state==BODY8)
+        data_out <= {body_reg,data_in};          
+        // IF STATE IS BODY8 THEN SET READY ELSE IF READING THEN CLEAR READY
+          if (state==BODY8) ready <= 1; 
+          else              ready <= 0;
 
+        // IF READING THEN CLEAR OVERRUN, ELSE
+        // IF STATE IS BODY8 AND STILL READY THEN SET OVERRUN
+          if (reading)               overrun <= 0; else
+          if (state==BODY8 && ready) overrun <= 1;
+        end    
+
+    end
+
+        // WHEN IN EACH STATE WHAT MOVES FSM TO WHAT NEXT STATE?
+  always @* 
+    case ( state )
+      HEAD1: nstate = (data_in ) ? HEAD2 : HEAD1 ; //1
+      HEAD2: nstate = (!data_in) ? HEAD3 : HEAD2 ; //10
+      HEAD3: nstate = (data_in ) ? HEAD4 : HEAD1 ; //101
+      HEAD4: nstate = (!data_in) ? HEAD5 : HEAD2 ; //1010
+      HEAD5: nstate = (!data_in) ? HEAD6 : HEAD4 ; //10100
+      HEAD6: nstate = (data_in ) ? HEAD7 : HEAD1 ; //101001
+      HEAD7: nstate = (!data_in) ? HEAD8 : HEAD2 ; //1010010
+      HEAD8: nstate = (data_in ) ? BODY1 : HEAD1 ; //10100101
+      BODY1: nstate = BODY2;
+      BODY2: nstate = BODY3;
+      BODY3: nstate = BODY4;
+      BODY4: nstate = BODY5;
+      BODY5: nstate = BODY6;
+      BODY6: nstate = BODY7;
+      BODY7: nstate = BODY8;
+      BODY8: nstate = HEAD1;
+    endcase
+
+  always @(posedge clock)
     if (reset) begin
 
         // CLEAR ALL CONTROL REGISTERS TO INACTIVE STATE (IGNORE DATA REGISTERS)
-
-
-
+      state   <= HEAD1;
 
       end
 
     else begin
-
-        // WHEN IN EACH STATE WHAT MOVES FSM TO WHAT NEXT STATE?
-        case ( state )
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        endcase
-
-        // IF STATE IS BODY? THEN SHIFT DATA INPUT LEFT INTO BODY REGISTER
-
-
-
-
-        // IF STATE IS BODY8 THEN COPY CONCATENATION OF BODY REGISTER AND INPUT
-        // DATA TO OUTPUT REGISTER
-
-
-        // IF STATE IS BODY8 THEN SET READY ELSE IF READING THEN CLEAR READY
-
-
-        // IF READING THEN CLEAR OVERRUN, ELSE
-        // IF STATE IS BODY8 AND STILL READY THEN SET OVERRUN
-
+      state <= nstate;
 
       end
 
