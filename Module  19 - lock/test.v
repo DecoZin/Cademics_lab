@@ -41,8 +41,12 @@ module requester
 // TO DO - Define a watchdog task that after a reasonable amount of time
 //         (the solution uses 17 ns) drops both request signals and disables
 //         the request loop. The request loop will immediately restart.
-
-
+task watchdog;
+  begin
+    REQA=0; REQB=0;
+    disable REQUEST.LOOP;
+  end
+endtask
 
   initial begin : REQUEST
       integer seed;
@@ -56,8 +60,8 @@ module requester
           // TO DO - Change each wait statement to a parallel block that:
           //         - Enables the watchdog task
           //         - Waits for the grant and when it comes disables the task
-          if (REQA)   wait (GNTA);
-          if (REQB)   wait (GNTB);  
+          if (REQA) fork WD; wait (GNTA) disable WD; join
+          if (REQB) fork WD; wait (GNTB) disable WD; join  
         end
     end
 
